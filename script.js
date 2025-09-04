@@ -4,6 +4,9 @@ const amount = document.getElementById("amount")
 const expense = document.getElementById("expense")
 const category = document.getElementById("category")
 
+// seleciona os elementos da lista
+const expenseList = document.querySelector("ul")
+
 // observa toda vez que algum valor for inserido/alterado no input
 amount.oninput = () => {
   /*
@@ -36,8 +39,9 @@ function formatCurrencyBRL(value) {
 
 // trata o evento de enviar formulario
 form.onsubmit = (event) => {
-  event.preventDefault() // previne o evento de envio do botão
+  event.preventDefault() // previne o evento de envio padrão do botão
 
+  // cria um novo objeto com os dados da tela
   const newExpense = {
     id: new Date().getTime(), // pega a hora exata do momento do envio
     expense: expense.value,
@@ -47,5 +51,52 @@ form.onsubmit = (event) => {
     created_at: new Date(),
   }
 
-  console.log(newExpense)
+  // chama a função que adiciona o item na lista
+  expenseAdd(newExpense)
+}
+
+function expenseAdd(newExpense) {
+  try {
+    // cria o elemento que será adicionado na lista
+
+    // cria a o item (li) que é o elemento pai que será adicionado na lista(ul)
+    const expenseItem = document.createElement("li")
+    expenseItem.classList.add("expense")
+
+    // cria o ícone da categoria
+    const expenseIcon = document.createElement("img")
+    expenseIcon.setAttribute("src", `img/${newExpense.category_id}.svg`)
+    expenseIcon.setAttribute("alt", newExpense.category_name)
+
+    // cria a informação da despesa
+    const expenseInfo = document.createElement("div")
+    expenseInfo.classList.add("expense-info")
+
+    // cria o nome da despesa
+    const expenseName = document.createElement("strong")
+    expenseName.textContent = newExpense.expense
+
+    // cria o nome do tipo de despesa
+    const expenseCategory = document.createElement("span")
+    expenseCategory.textContent = newExpense.category_name
+
+    // monta a div do nome da dispesa
+    expenseInfo.append(expenseName, expenseCategory)
+
+    // cria o valor da despesa
+    const expenseAmount = document.createElement("span")
+    expenseAmount.classList.add("expense-amount")
+    expenseAmount.innerHTML = `<small>R$</small>${newExpense.amount
+      .toUpperCase()
+      .replace("R$", "")}`
+
+    // adiciona os elementos criados no item (li)
+    expenseItem.append(expenseIcon, expenseInfo, expenseAmount)
+
+    // adiciona o item (li) na lista (ul)
+    expenseList.append(expenseItem)
+  } catch (error) {
+    alert("Não foi possível inserir a nova despesa!")
+    console.log(error)
+  }
 }
